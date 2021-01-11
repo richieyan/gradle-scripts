@@ -2,6 +2,7 @@ def libDir = "${buildscript.sourceFile.parentFile}"
 
 configure(projectsWithFlags('java')) {
     def thriftJsonEnabled = true
+    def fullCamelEnabled = true
     ext {
         thriftVersion = null
         thriftPath = null
@@ -64,9 +65,10 @@ configure(projectsWithFlags('java')) {
                         }.each { sourceFile ->
                             logger.info("Using ${actualThriftPath} to generate Java sources from ${sourceFile}")
                             project.mkdir(javaOutputDir)
+                            javaGenerator = fullCamelEnabled : 'java' ? 'java:fullcamel'
                             project.exec {
                                 commandLine actualThriftPath
-                                args '-gen', 'java', '-out', javaOutputDir
+                                args '-gen', javaGenerator, '-out', javaOutputDir
                                 includeDirs.each {
                                     args '-I', it
                                 }
